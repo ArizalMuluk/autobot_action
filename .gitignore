@@ -6,4 +6,4 @@ __pycache__/
 .vscode/
 
 actions.json
-*.png
+test.png

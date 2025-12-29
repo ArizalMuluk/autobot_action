@@ -46,6 +46,15 @@ python main.py
 4. Click "Create Floating Button for Selected" — a draggable floating controller appears.
 5. Press the floating button's Start option to run the configured action sequence.
 
+## Tutorial
+First, add the action you want to include. There are currently 2 action options (image and text). After adding actions and ensuring they are sufficient, press the "Create Floating Button" button.
+
+![Step 1](./doc/tutor1.png)
+
+Second, once the floating button appears, go to the target application, click the gear icon, and execute the actions using the start button (play symbol).
+
+![Step 2](./doc/tutor2.png)
+
 ## Notes & Troubleshooting
 - Image matching uses pyautogui.locateCenterOnScreen. For reliable "confidence" matching, install OpenCV (`opencv-python`).
 - Wayland screenshot limitations: image matching may not work properly under Wayland; use X11/XWayland or an alternate screenshot backend.

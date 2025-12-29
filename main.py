@@ -20,7 +20,7 @@ class ActionManagerWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Auto Bot Manager")
+        self.setWindowTitle("Auto Bot Aplications")
         self.setMinimumSize(720, 420)
 
         # global font
@@ -47,7 +47,7 @@ class ActionManagerWindow(QMainWindow):
 
         # Header
         header_row = QHBoxLayout()
-        title = QLabel("Autobot Action Manager")
+        title = QLabel("Autobot Action Aplications")
         title.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
         title.setStyleSheet(f"color: {TEXT};")
         subtitle = QLabel("Manage actions and create bot controls")
@@ -188,7 +188,7 @@ class ActionManagerWindow(QMainWindow):
         ops_col = QVBoxLayout()
         ops_col.setSpacing(10)
         # larger primary button
-        spawn_btn = QPushButton("Create Floating Button\nfor Selected")
+        spawn_btn = QPushButton("Create Floating Button")
         spawn_btn.setCursor(Qt.PointingHandCursor)
         spawn_btn.setFixedHeight(46)
         spawn_btn.setStyleSheet(
@@ -199,7 +199,7 @@ class ActionManagerWindow(QMainWindow):
         ops_col.addWidget(spawn_btn)
 
         # larger danger button
-        remove_btn = QPushButton("Remove\nSelected")
+        remove_btn = QPushButton("Remove Selected")
         remove_btn.setCursor(Qt.PointingHandCursor)
         remove_btn.setFixedHeight(40)
         remove_btn.setStyleSheet(
@@ -283,19 +283,21 @@ class ActionManagerWindow(QMainWindow):
             save_actions(self._actions)
 
     def create_floating_for_selected(self):
+        
+        # require at least one action selected (or inform user)
         idx = self.list_widget.currentRow()
-        if idx < 0 or idx >= len(self._actions):
+        if idx < 0 or not self._actions:
             QMessageBox.information(self, "Select action", "Please select an action from the list first.")
             return
 
-        sequence = [dict(a) for a in self._actions[idx:]]  
+        # Execute actions in the exact order shown in the list (top -> bottom)
+        sequence = [dict(a) for a in self._actions]  # copy current order
 
         geom = self.geometry()
         spawn_pos = (geom.x() + geom.width() + 10, geom.y() + 30)
 
         fb = FloatingButton(diameter=50, initial_pos=spawn_pos)
         fb.action_sequence = sequence
-
         fb.show()
         self._floating_buttons.append(fb)
 
