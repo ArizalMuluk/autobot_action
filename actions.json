@@ -1,0 +1,12 @@
+[
+  {
+    "name": "1",
+    "type": "image",
+    "param": "/home/rijalgemink/Documents/Python/Automation/CocAutoFarm/msg.png"
+  },
+  {
+    "name": "2",
+    "type": "write",
+    "param": "hello world"
+  }
+]

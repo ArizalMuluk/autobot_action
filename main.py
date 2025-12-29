@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from button import FloatingButton, MouseController
+from storage import load_actions, save_actions
 
 class ActionManagerWindow(QMainWindow):
     """Window to add/manage actions (type + parameter) and spawn floating buttons bound to them."""
@@ -18,7 +19,14 @@ class ActionManagerWindow(QMainWindow):
         self.setWindowTitle("Action Manager")
         self.setMinimumSize(480, 360)
 
-        self._actions: List[Dict[str, str]] = []  # each: {'name': str, 'type': str, 'param': str}
+        # load saved actions (falls back to empty list)
+        self._actions: List[Dict[str, str]] = load_actions()
+        # populate list widget from loaded actions
+        for a in self._actions:
+            name = a.get("name", "")
+            atype = a.get("type", "")
+            param = a.get("param", "")
+            self.list_widget.addItem(f"{name} [{atype}] — {param}")
 
         central = QWidget()
         self.setCentralWidget(central)
@@ -110,6 +118,8 @@ class ActionManagerWindow(QMainWindow):
         entry = {'name': name, 'type': atype, 'param': param}
         self._actions.append(entry)
         self.list_widget.addItem(f"{name} [{atype}] — {param}")
+        save_actions(self._actions)
+
         self.param_input.clear()
         self.name_input.clear()
 
@@ -118,6 +128,7 @@ class ActionManagerWindow(QMainWindow):
         if idx >= 0:
             self.list_widget.takeItem(idx)
             del self._actions[idx]
+            save_actions(self._actions)
 
     def create_floating_for_selected(self):
         idx = self.list_widget.currentRow()

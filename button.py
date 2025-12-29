@@ -7,7 +7,7 @@ import pyautogui as pyg
 from PySide6.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QEvent
 
 pyg.FAILSAFE = True
 
@@ -76,6 +76,7 @@ class FloatingButton(QWidget):
         self.main_btn.setFocusPolicy(Qt.NoFocus)
         self.main_btn.setCursor(Qt.PointingHandCursor)
         self.main_btn.clicked.connect(self.toggle_options)
+        self.main_btn.installEventFilter(self)
 
         opt_radius = self.opt_size // 2
         self.start_btn = QPushButton(" ▶ ", self)
@@ -133,6 +134,23 @@ class FloatingButton(QWidget):
         self._relayout()
         if initial_pos:
             self.move(*initial_pos)
+
+    def eventFilter(self, obj, event):
+        # catch mouse events on main_btn so dragging starts even when pressing the button
+        if obj is self.main_btn:
+            if event.type() == QEvent.MouseButtonPress:
+                if event.button() == Qt.LeftButton:
+                    self._drag_offset = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+                # allow button click processing as well
+                return False
+            if event.type() == QEvent.MouseMove:
+                if self._drag_offset is not None and event.buttons() & Qt.LeftButton:
+                    self.move(event.globalPosition().toPoint() - self._drag_offset)
+                    return True
+            if event.type() == QEvent.MouseButtonRelease:
+                self._drag_offset = None
+                return False
+        return super().eventFilter(obj, event)
 
     def _relayout(self):
         """Position main button and option buttons using current offset."""
